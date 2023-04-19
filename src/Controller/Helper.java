@@ -117,38 +117,49 @@ checks if data entry is null returns boolean if true/false
  */
     public static boolean validateCustomer(Customer customer){
         boolean isFieldEmpty = true;
-        if(customer.getName() == null){
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Please input customer name");
-            alert.setHeaderText("Please input customer name");
-            alert.showAndWait();
+        if(customer.getName().equals("")){
             isFieldEmpty = false;
         }
-        if(customer.getAddress() == null){
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Please input customer address");
-            alert.setHeaderText("Please input customer address");
-            alert.showAndWait();
+        if(customer.getAddress().equals("")){
             isFieldEmpty = false;
         }
-        if(customer.getPostal_code() == null){
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Please input customer zip code");
-            alert.setHeaderText("Please input customer zip code");
-            alert.showAndWait();
+        if(customer.getPostal_code().equals("")){
             isFieldEmpty = false;
         }
-        if(customer.getPhone() == null){
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Please input customer phone number");
-            alert.setHeaderText("Please input customer phone number");
-            alert.showAndWait();
+        if(customer.getPhone().equals("")){
             isFieldEmpty = false;
         }
         return isFieldEmpty;
     }
 
-
+    public static boolean validateAppointment(Appointment appointment){
+        boolean isFieldEmpty = true;
+        if(appointment.getUserId() == 0){
+            isFieldEmpty = false;
+        }
+        if(appointment.getCustomerId() == 0){
+            isFieldEmpty = false;
+        }
+        if(appointment.getTitle().equals("")){
+            isFieldEmpty = false;
+        }
+        if(appointment.getDescription().equals("")){
+            isFieldEmpty = false;
+        }
+        if(appointment.getLocation().equals("")){
+            isFieldEmpty = false;
+        }
+        if(appointment.getStartDateTime().toString().equals("")){
+            isFieldEmpty = false;
+        }
+        if(appointment.getEndDateTime().toString().equals("")){
+            isFieldEmpty = false;
+        }
+        if(appointment.getType().equals("")){
+            isFieldEmpty = false;
+        }
+        return isFieldEmpty;
+    }
 }
 
 

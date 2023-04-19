@@ -69,6 +69,7 @@
                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                     </columnConstraints>
                     <rowConstraints>
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -85,6 +86,7 @@
                      </toggleGroup></RadioButton>
                         <RadioButton fx:id="viewMonthlyRadio" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#viewMonthlyAction" prefHeight="17.0" prefWidth="322.0" text="Monthly" toggleGroup="$group1" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                         <RadioButton fx:id="viewWeeklyRadio" alignment="TOP_CENTER" contentDisplay="TOP" mnemonicParsing="false" onAction="#viewWeeklyAction" prefHeight="17.0" prefWidth="339.0" text="Weekly" toggleGroup="$group1" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                  <RadioButton fx:id="viewDailyRadio" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#viewDailyAction" text="Daily" toggleGroup="$group1" GridPane.columnIndex="3" GridPane.rowIndex="1" />
                     </children>
                 </GridPane>
                 <AnchorPane layoutX="1.0" layoutY="65.0" prefHeight="190.0" prefWidth="1016.0">
@@ -102,7 +104,7 @@
                                 <TableColumn fx:id="customerID" prefWidth="125.0" text="Customer ID" />
                             </columns>
                         </TableView>
-                  <TextField fx:id="searchAppointments" layoutX="6.0" layoutY="28.0" onAction="#enterSearchAppointments" text="Search By ID or Title " />
+                  <TextField fx:id="searchAppointments" layoutX="6.0" layoutY="28.0" onAction="#enterSearchAppointments" promptText="Search By ID or Title " />
                     </children>
                 </AnchorPane>
             </children>

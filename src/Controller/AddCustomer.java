@@ -62,48 +62,55 @@ public class AddCustomer implements Initializable {
  */
     public void saveExit(ActionEvent actionEvent) throws IOException {
 //Alert creation to use as trigger to create and add a customer
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setContentText("Press OK to submit");
-        alert.setContentText("Create a new Customer?");
-        alert.setTitle("Create a new Customer");
-        Optional<ButtonType> decision = alert.showAndWait();
-        //if ok pressed customer is assigned values from text fields
-        if (decision.get() == ButtonType.OK) {
-            int idl = Integer.parseInt(customerId.getText());
-            String namel = name.getText();
-            String addressl = address.getText();
-            String zipl = zip.getText();
-            String phonel = phone.getText();
-            String customerDivision = divisionInfoCombo.getSelectionModel().getSelectedItem().toString();
-            int customerDivisionId = 0;
-        //Division for loop to assign divisionId
-            for (Division division : divisions) {
-                if (division.getDivisionName().equals(customerDivision)) {
-                    customerDivisionId = division.getDivisionId();
-                    break;
+        try {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setContentText("Press OK to submit");
+            alert.setContentText("Create a new Customer?");
+            alert.setTitle("Create a new Customer");
+            Optional<ButtonType> decision = alert.showAndWait();
+            //if ok pressed customer is assigned values from text fields
+            if (decision.get() == ButtonType.OK) {
+                int idl = Integer.parseInt(customerId.getText());
+                String namel = name.getText();
+                String addressl = address.getText();
+                String zipl = zip.getText();
+                String phonel = phone.getText();
+                String customerDivision = divisionInfoCombo.getSelectionModel().getSelectedItem().toString();
+                int customerDivisionId = 0;
+                //Division for loop to assign divisionId
+                for (Division division : divisions) {
+                    if (division.getDivisionName().equals(customerDivision)) {
+                        customerDivisionId = division.getDivisionId();
+                        break;
+                    }
+                }
+                //Customer crreation
+                Customer newCustomer = new Customer(idl, namel, addressl, zipl, phonel, customerDivisionId, loggedInUser);
+                //Customer input validation used
+                if (Helper.validateCustomer(newCustomer)) {
+                    Create.createCustomer(newCustomer);
+                    //FXMLLoader object created to move user back to main screen, passes loggedInUser
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/View/Main Screen.fxml"));
+                    Parent mainScreenParent = loader.load();
+                    MainScreen controller = loader.getController();
+                    controller.passLoggedInUser(loggedInUser);
+                    System.out.println(loggedInUser);
+                    Scene mainScreenScene = new Scene(mainScreenParent);
+                    Stage window = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+                    window.setScene(mainScreenScene);
+                    window.show();
+                } else {
+                    Alert alertCustomer = new Alert(Alert.AlertType.ERROR);
+                    alertCustomer.setHeaderText("Please input data into all customer data fields");
+                    alertCustomer.setTitle("Missing customer data");
+                    alertCustomer.showAndWait();
                 }
             }
-        //Customer crreation
-            Customer newCustomer = new Customer(idl, namel, addressl, zipl, phonel, customerDivisionId, loggedInUser);
-        //Customer input validation used
-            if (Helper.validateCustomer(newCustomer)) {
-                Create.createCustomer(newCustomer);
-        //FXMLLoader object created to move user back to main screen, passes loggedInUser
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/View/Main Screen.fxml"));
-                Parent mainScreenParent = loader.load();
-                MainScreen controller = loader.getController();
-                controller.passLoggedInUser(loggedInUser);
-                System.out.println(loggedInUser);
-                Scene mainScreenScene = new Scene(mainScreenParent);
-                Stage window = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
-                window.setScene(mainScreenScene);
-                window.show();
-            }else{
-                Alert alertCustomer = new Alert(Alert.AlertType.ERROR);
-                alertCustomer.setHeaderText("Please input data into all customer data fields");
-                alertCustomer.setTitle("Missing customer data");
-                alertCustomer.showAndWait();
-            }
+        }catch (RuntimeException e){
+            Alert alertCustomer = new Alert(Alert.AlertType.ERROR);
+            alertCustomer.setHeaderText("Please input data into all customer data fields");
+            alertCustomer.setTitle("Missing customer data");
+            alertCustomer.showAndWait();
         }
     }
 

@@ -3,14 +3,18 @@ package Database;
 import Model.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.control.Alert;
+
 import java.sql.*;
 import java.time.LocalDateTime;
+import java.util.Locale;
 
 public class Read {
 //    public static ObservableList<Appointment> getAppsByMonth;
 
     /**
      * Observable list of users to compare user login information to database
+     *
      * @return
      */
     public static ObservableList<Users> getUsersInfo() {
@@ -39,6 +43,7 @@ public class Read {
 
     /**
      * Observable list of all countries
+     *
      * @return
      */
     public static ObservableList<Country> getAllCountries() {
@@ -69,6 +74,7 @@ public class Read {
 
     /**
      * gets all customers and returns them in an array
+     *
      * @return
      */
     public static ObservableList<Customer> getAllCustomers() {
@@ -103,6 +109,7 @@ public class Read {
 
     /**
      * Gets all existing appointments in database
+     *
      * @return
      */
     public static ObservableList<Appointment> getAppointments() {
@@ -142,8 +149,8 @@ public class Read {
     }
 
     /**
-    @param countryId gets divisions buy countryId - creates array list of divisions and returns it
-    @throws SQLException catches exception if thrown
+     * @param countryId gets divisions buy countryId - creates array list of divisions and returns it
+     * @throws SQLException catches exception if thrown
      */
     public static ObservableList<Division> getAllDivisionsByCountryId(int countryId) throws SQLException {
         ObservableList<Division> divisions = FXCollections.observableArrayList();
@@ -170,6 +177,7 @@ public class Read {
 
     /**
      * method to retrieve all divisions with observable list
+     *
      * @return
      * @throws SQLException
      */
@@ -188,32 +196,33 @@ public class Read {
             }
         } catch (SQLException e) {
 
-            }
+        }
         //returns divisions array list
         return divisions;
     }
 
     /**
      * gets all contacts - creates observable list and returns in
+     *
      * @return
      */
-    public static ObservableList<Contact> getallContacts(){
+    public static ObservableList<Contact> getallContacts() {
         ObservableList<Contact> contacts = FXCollections.observableArrayList();
-        try{
+        try {
             //sql query String
             String sql = "SELECT * FROM client_schedule.contacts;";
             PreparedStatement ps = JDBC.getConnection().prepareStatement(sql);
             //executes query and assigns to result set
             ResultSet rs = ps.executeQuery();
 
-            while (rs.next()){
+            while (rs.next()) {
                 String emaill = rs.getString("Email");
                 String namel = rs.getString("Contact_name");
                 int contactId = rs.getInt("Contact_Id");
                 Contact contact = new Contact(emaill, namel, contactId);
                 contacts.add(contact);
             }
-        }catch (SQLException e){
+        } catch (SQLException e) {
             System.out.println("getAppointments Error: " + e);
         }
         //returns contacts list
@@ -221,7 +230,7 @@ public class Read {
     }
 
     /**
-    @param specificCountryId gets country by specific ID and returns country list
+     * @param specificCountryId gets country by specific ID and returns country list
      */
     public static Country getCounryById(int specificCountryId) {
         Country specificCountry = null;
@@ -249,9 +258,9 @@ public class Read {
 
 
     /**
-    @param customerId accepts customerId selects all appointments where customerId matches
+     * @param customerId accepts customerId selects all appointments where customerId matches
      */
-    public static int customerApps(int customerId){
+    public static int customerApps(int customerId) {
         int customerAppointments = 0;
         try {
             //sql query string
@@ -262,7 +271,7 @@ public class Read {
             //executes query and assigns to result set
             ResultSet rs = ps.executeQuery();
 
-            while (rs.next()){
+            while (rs.next()) {
                 customerAppointments = customerAppointments + 1;
             }
         } catch (SQLException e) {
@@ -271,8 +280,9 @@ public class Read {
         //returns customer appointments list
         return customerAppointments;
     }
+
     /**
-    Reports by type and month method - creates and returns an array of reports
+     * Reports by type and month method - creates and returns an array of reports
      */
     public static ObservableList<ReportMonthandType> getAppsByTypeAndMonth() throws SQLException {
         ObservableList<ReportMonthandType> typeAndMonth = FXCollections.observableArrayList();
@@ -283,7 +293,7 @@ public class Read {
             //executes and assigns to result set
             ResultSet rs = ps.executeQuery();
 
-            while(rs.next()){
+            while (rs.next()) {
                 String month = rs.getString("month");
                 int count = rs.getInt("count");
                 String type = rs.getString("type");
@@ -292,7 +302,7 @@ public class Read {
                 //adding report to array of reports
                 typeAndMonth.add(report);
             }
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         //returns reports
@@ -300,8 +310,8 @@ public class Read {
     }
 
     /**
-    method for gathering similar zip codes grouped by count
-    creates array list of zips
+     * method for gathering similar zip codes grouped by count
+     * creates array list of zips
      */
     public static ObservableList<SharedZip> getZips() {
         ObservableList<SharedZip> zipReports = FXCollections.observableArrayList();
@@ -311,7 +321,7 @@ public class Read {
             PreparedStatement ps = JDBC.openConnection().prepareStatement(sql);
             //query execute and assigns to resultset
             ResultSet rs = ps.executeQuery();
-            while(rs.next()){
+            while (rs.next()) {
                 String zip = rs.getString("postal_code");
                 int count = rs.getInt("count");
                 SharedZip report = new SharedZip(count, zip);
@@ -325,18 +335,18 @@ public class Read {
     }
 
     /**
-    @param contactName gets contact ID from contact name that user passes
+     * @param contactName gets contact ID from contact name that user passes
      */
-    public static int contactIdFromName(String contactName){
+    public static int contactIdFromName(String contactName) {
         int contactId = 0;
         try {
             //sql query string
             String sql = "SELECT contact_id from client_schedule.contacts WHERE contact_name = ?";
-            PreparedStatement  ps = JDBC.getConnection().prepareStatement(sql);
+            PreparedStatement ps = JDBC.getConnection().prepareStatement(sql);
             ps.setString(1, contactName);
             ResultSet rs = ps.executeQuery();
             //query execute and assigns to resultset
-            while(rs.next()){
+            while (rs.next()) {
                 contactId = rs.getInt("Contact_Id");
             }
         } catch (SQLException e) {
@@ -347,8 +357,8 @@ public class Read {
     }
 
     /**
-    @param contactId gets apps by contactId
-    Creates list of appointments and returns the list
+     * @param contactId gets apps by contactId
+     *                  Creates list of appointments and returns the list
      */
     public static ObservableList<Appointment> getAppsByContact(int contactId) {
         ObservableList<Appointment> apps = FXCollections.observableArrayList();
@@ -357,11 +367,11 @@ public class Read {
         try {
             PreparedStatement ps = JDBC.getConnection().prepareStatement(sql);
             //setting fed contactId
-            ps.setInt(1,  contactId);
+            ps.setInt(1, contactId);
             //executing and assigning to result set
             ResultSet rs = ps.executeQuery();
 
-            while(rs.next()){
+            while (rs.next()) {
                 String typel = rs.getString("type");
                 String locationl = rs.getString("location");
                 String descriptionl = rs.getString("description");
@@ -388,7 +398,7 @@ public class Read {
     }
 
     /**
-    appointments by month method - creates appointment array and returns it
+     * appointments by month method - creates appointment array and returns it
      */
     public static ObservableList<Appointment> getAppsByMonth() {
         ObservableList<Appointment> monthApps = FXCollections.observableArrayList();
@@ -399,7 +409,7 @@ public class Read {
             //executes and assigns to result set
             ResultSet rs = ps.executeQuery();
 
-            while(rs.next()){
+            while (rs.next()) {
                 int appointmentId = rs.getInt("Appointment_ID");
                 String title = rs.getString("Title");
                 String description = rs.getString("Description");
@@ -427,7 +437,7 @@ public class Read {
     }
 
     /**
-    creates and returns list of weekly appointments
+     * creates and returns list of weekly appointments
      */
     public static ObservableList<Appointment> getAppsByWeek() {
         ObservableList<Appointment> weekApps = FXCollections.observableArrayList();
@@ -438,7 +448,7 @@ public class Read {
             //query execute and assigns to result set
             ResultSet rs = ps.executeQuery();
 
-            while(rs.next()){
+            while (rs.next()) {
                 int appointmentId = rs.getInt("Appointment_ID");
                 String title = rs.getString("Title");
                 String description = rs.getString("Description");
@@ -462,5 +472,76 @@ public class Read {
         }
         //returning list
         return weekApps;
+    }
+
+    public static ObservableList<Appointment> getAppsByDay() {
+        ObservableList<Appointment> dayApps = FXCollections.observableArrayList();
+        //sql query string
+        String sql = "SELECT * FROM client_Schedule.appointments WHERE DATE_FORMAT(Start, \"%Y-%m-%d\") = curdate();";
+        try {
+            PreparedStatement ps = JDBC.getConnection().prepareStatement(sql);
+            //query execute and assigns to result set
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                int appointmentId = rs.getInt("Appointment_ID");
+                String title = rs.getString("Title");
+                String description = rs.getString("Description");
+                String location = rs.getString("Location");
+                String type = rs.getString("Type");
+                Timestamp start_time = rs.getTimestamp("Start");
+                Timestamp end_time = rs.getTimestamp("End");
+                int customerId = rs.getInt("Customer_ID");
+                int userId = rs.getInt("User_ID");
+                int contactId = rs.getInt("Contact_ID");
+                //timestamp to LocalDateTime conversion
+                LocalDateTime start = start_time.toLocalDateTime();
+                LocalDateTime end = end_time.toLocalDateTime();
+                //appointment creation
+                Appointment n = new Appointment(type, location, description, title, contactId, customerId, userId, appointmentId, end, start);
+                //adding appointment to list
+                dayApps.add(n);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        //returning list
+        return dayApps;
+    }
+
+    public static ObservableList<Customer> lookUpCustomer(String partialName, ObservableList<Customer> customers) {
+        ObservableList<Customer> filteredCustomers = FXCollections.observableArrayList();
+        for (Customer customer : customers) {
+            String x = Integer.toString(customer.getId());
+            if (customer.getName().toLowerCase().contains(partialName.toLowerCase())) {
+                filteredCustomers.add(customer);
+            } else if (x.contains(partialName)) {
+                filteredCustomers.add(customer);
+            }
+        }
+        if (filteredCustomers.size() == 0) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setContentText("No Customer found");
+            alert.showAndWait();
+        }
+        return FXCollections.observableArrayList(filteredCustomers);
+    }
+
+    public static ObservableList<Appointment> lookUpAppointment(String partialTitle, ObservableList<Appointment> appointments) {
+        ObservableList<Appointment> filteredAppointments = FXCollections.observableArrayList();
+        for (Appointment appointment : appointments) {
+            String A = Integer.toString(appointment.getAppointmentId());
+            if (appointment.getTitle().toLowerCase().contains(partialTitle.toLowerCase())) {
+                filteredAppointments.add(appointment);
+            } else if (A.contains(partialTitle)) {
+                filteredAppointments.add(appointment);
+            }
+        }
+        if (filteredAppointments.size() == 0) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setContentText("No appointment found");
+            alert.showAndWait();
+        }
+        return FXCollections.observableArrayList(filteredAppointments);
     }
 }

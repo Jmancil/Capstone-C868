@@ -68,12 +68,20 @@ public class MainScreen implements Initializable {
     public RadioButton viewMonthlyRadio;
     @FXML
     public RadioButton viewWeeklyRadio;
+    @FXML
+    public RadioButton viewDailyRadio;
+    @FXML
+    public TextField searchCustomer;
+    @FXML
+    public TextField searchAppointments;
+
 
     //Creating arraylists for customers, appointments, monthlyapps, and weeklyapps
     ObservableList<Customer> customers = Read.getAllCustomers();
     ObservableList<Appointment> appointments = Read.getAppointments();
     ObservableList<Appointment> monthlyAppointments = Read.getAppsByMonth() ;
     ObservableList<Appointment> weeklyAppointments = Read.getAppsByWeek();
+    ObservableList<Appointment> dailyAppointments = Read.getAppsByDay();
 
     /**
     passing the logged in user around for DB update purposes
@@ -276,6 +284,7 @@ this is also the default setting when a user first enters the application
     public void viewAllAction(ActionEvent actionEvent) {
         viewWeeklyRadio.setSelected(false);
         viewMonthlyRadio.setSelected(false);
+        viewDailyRadio.setSelected(false);
         appTable.setItems(null);
 
         appTable.setItems(appointments);
@@ -287,6 +296,7 @@ this is also the default setting when a user first enters the application
     public void viewMonthlyAction(ActionEvent actionEvent) {
         viewWeeklyRadio.setSelected(false);
         viewAllRadio.setSelected(false);
+        viewDailyRadio.setSelected(false);
         appTable.setItems(null);
 
         appTable.setItems(monthlyAppointments);
@@ -298,14 +308,33 @@ this is also the default setting when a user first enters the application
     public void viewWeeklyAction(ActionEvent actionEvent) {
         viewMonthlyRadio.setSelected(false);
         viewAllRadio.setSelected(false);
+        viewDailyRadio.setSelected(false);
         appTable.setItems(null);
 
         appTable.setItems(weeklyAppointments);
     }
 
+
+    public void viewDailyAction(ActionEvent actionEvent) {
+        viewMonthlyRadio.setSelected(false);
+        viewAllRadio.setSelected(false);
+        viewDailyRadio.setSelected(false);
+        appTable.setItems(null);
+
+        appTable.setItems(dailyAppointments);
+    }
+
     public void enterSearchCustomer(ActionEvent actionEvent) {
+        String C = searchCustomer.getText();
+        ObservableList<Customer> searchedCustomer = Read.lookUpCustomer(C, Read.getAllCustomers());
+
+        customerTable.setItems(searchedCustomer);
     }
 
     public void enterSearchAppointments(ActionEvent actionEvent) {
+        String A = searchAppointments.getText();
+        ObservableList<Appointment> searchedAppointment = Read.lookUpAppointment(A, Read.getAppointments());
+        appTable.setItems(searchedAppointment);
     }
+
 }

@@ -52,34 +52,36 @@ public class AddAppointment implements Initializable {
     @param  actionEvent button press trigger for creation of Appointment
      */
     public void saveAction(ActionEvent actionEvent) throws IOException, SQLException {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setContentText("Press OK to submit");
-        alert.setContentText("Create a new Appointment?");
-        alert.setTitle("Create a new Appointment");
-        Optional<ButtonType> decision = alert.showAndWait();
+        try {
+
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setContentText("Press OK to submit");
+            alert.setContentText("Create a new Appointment?");
+            alert.setTitle("Create a new Appointment");
+            Optional<ButtonType> decision = alert.showAndWait();
 /**
  Alert created above and used below as trigger to assign data from fields to new appointment object
-*/
-        if (decision.get() == ButtonType.OK) {
-            int idl = Integer.parseInt(appointmentId.getText());
-            int userIdl = Integer.parseInt(userId.getText());
-            int customerID = Integer.parseInt(customerId.getText());
-            String titlel = title.getText();
-            String descriptionl = description.getText();
-            String locationl = location.getText();
-            LocalDateTime startl = dateRevert(start.getText());
-            LocalDateTime endl = dateRevert(end.getText());
-            String typel = type.getText();
-            String contactName = contactCombo.getSelectionModel().getSelectedItem().toString();
-            int contactId = 0;
+ */
+            if (decision.get() == ButtonType.OK) {
+                int idl = Integer.parseInt(appointmentId.getText());
+                int userIdl = Integer.parseInt(userId.getText());
+                int customerID = Integer.parseInt(customerId.getText());
+                String titlel = title.getText();
+                String descriptionl = description.getText();
+                String locationl = location.getText();
+                LocalDateTime startl = dateRevert(start.getText());
+                LocalDateTime endl = dateRevert(end.getText());
+                String typel = type.getText();
+                String contactName = contactCombo.getSelectionModel().getSelectedItem().toString();
+                int contactId = 0;
             /*
             Contact for loop to select correct contact ID
              */
-            for (Contact contact : contacts) {
-                if (contactName.equalsIgnoreCase(contact.getContactNa())) {
-                    contactId = contact.getContactId();
+                for (Contact contact : contacts) {
+                    if (contactName.equalsIgnoreCase(contact.getContactNa())) {
+                        contactId = contact.getContactId();
+                    }
                 }
-            }
             /*
             New appointment created and checked with isAppointmentOverLapped method & isAppBusinessHours method to check for overlapping
             appointment times and that the appointment falls within the weekday
@@ -88,6 +90,8 @@ public class AddAppointment implements Initializable {
                 Appointment newAppointment = new Appointment(typel, locationl, descriptionl, titlel, contactId, customerID, userIdl, idl, endl, startl, loggedInUser);
                 if (!isAppointmnetOverlapped(newAppointment) && isAppBusinessHours(newAppointment)) {
                     if (!startl.isAfter(endl)) {
+                        if(Helper.validateAppointment(newAppointment)){
+
                         Create.createAppointment(newAppointment);
                     /*
                     Loader object created to move user to main screen and pass back loggedInUser
@@ -101,12 +105,25 @@ public class AddAppointment implements Initializable {
                         Stage window = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
                         window.setScene(mainScreenScene);
                         window.show();
-                    } else{
+                        }else{
+                            Alert alertCustomer = new Alert(Alert.AlertType.ERROR);
+                            alertCustomer.setHeaderText("Please input data into all Appointment data fields");
+                            alertCustomer.setTitle("Missing appointment data");
+                            alertCustomer.showAndWait();
+                        }
+
+                    } else {
                         Helper.AlertError(Alert.AlertType.ERROR, "Error", "Start time must be before appointment end time");
                     }
-                }else {
+                } else {
                     Helper.AlertError(Alert.AlertType.ERROR, "Invalid appointment hours", "Appointment time is overlapping or Appointment Start/End date is before or after business hours");
+                }
             }
+        }catch (RuntimeException e){
+            Alert alertCustomer = new Alert(Alert.AlertType.ERROR);
+            alertCustomer.setHeaderText("Please input data into all appointment data fields");
+            alertCustomer.setTitle("Missing appointment data");
+            alertCustomer.showAndWait();
         }
     }
 
