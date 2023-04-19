@@ -112,51 +112,67 @@ meeting is during business hours.
 Also passes back the logged in user
  */
     public void saveExit(ActionEvent actionEvent) throws IOException {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setContentText("Press OK to submit");
-        alert.setContentText("Exit to main screen?");
-        alert.setTitle("Exit to main screen?");
-        Optional<ButtonType> decision = alert.showAndWait();
-        //if "OK" pressed triggers creation
-        if (decision.get() == ButtonType.OK) {
+        try {
 
-            int appIdl = Integer.parseInt(appointmentId.getText());
-            int userIdl = Integer.parseInt(userId.getText());
-            int customerIdl = Integer.parseInt(customerId.getText());
-            String titlel = title.getText();
-            String descriptionl = description.getText();
-            String locationl = location.getText();
-            String typel = type.getText();
-            LocalDateTime startl = dateRevert(start.getText());
-            LocalDateTime endl = dateRevert(end.getText());
-            String contactName = contactCombo.getSelectionModel().getSelectedItem().toString();
-            int contactId = 0;
+
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setContentText("Press OK to submit");
+            alert.setContentText("Exit to main screen?");
+            alert.setTitle("Exit to main screen?");
+            Optional<ButtonType> decision = alert.showAndWait();
+            //if "OK" pressed triggers creation
+            if (decision.get() == ButtonType.OK) {
+
+                int appIdl = Integer.parseInt(appointmentId.getText());
+                int userIdl = Integer.parseInt(userId.getText());
+                int customerIdl = Integer.parseInt(customerId.getText());
+                String titlel = title.getText();
+                String descriptionl = description.getText();
+                String locationl = location.getText();
+                String typel = type.getText();
+                LocalDateTime startl = dateRevert(start.getText());
+                LocalDateTime endl = dateRevert(end.getText());
+                String contactName = contactCombo.getSelectionModel().getSelectedItem().toString();
+                int contactId = 0;
             /*
             Contact for loop to select correct contact ID
              */
-            for (Contact contact : contacts) {
-                if (contactName.equalsIgnoreCase(contact.getContactNa())) {
-                    contactId = contact.getContactId();
+                for (Contact contact : contacts) {
+                    if (contactName.equalsIgnoreCase(contact.getContactNa())) {
+                        contactId = contact.getContactId();
+                    }
+                }
+                //appointment created/assigned with new values
+                Appointment appointmentModified = new Appointment(typel, locationl, descriptionl, titlel, contactId, customerIdl, userIdl, appIdl, endl, startl, loggedInUser);
+                //checks for overlap time && business hour check
+                if (!isAppointmnetOverlapped(appointmentModified) && isAppBusinessHours(appointmentModified)) {
+                    if (Helper.validateAppointment(appointmentModified)) {
+                        Update.updateApp(appointmentModified);
+                        //Moves user to main screen and passes loggedInUser
+                        FXMLLoader loader = new FXMLLoader(getClass().getResource("/View/Main Screen.fxml"));
+                        Parent mainScreen = loader.load();
+                        MainScreen controller = loader.getController();
+                        controller.passLoggedInUser(loggedInUser);
+                        System.out.println(loggedInUser);
+                        Scene mainScreenScene = new Scene(mainScreen);
+                        Stage window = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+                        window.setScene(mainScreenScene);
+                        window.show();
+                    } else {
+                        Alert alertCustomer = new Alert(Alert.AlertType.ERROR);
+                        alertCustomer.setHeaderText("Please input data into all Appointment data fields");
+                        alertCustomer.setTitle("Missing appointment data");
+                        alertCustomer.showAndWait();
+                    }
+                } else {
+                    Helper.AlertError(Alert.AlertType.ERROR, "Invalid appointment hours", "Appointment time is overlapping or Appointment Start/End date is before or after business hours");
                 }
             }
-            //appointment created/assigned with new values
-            Appointment appointmentModified = new Appointment(typel, locationl, descriptionl, titlel, contactId, customerIdl, userIdl, appIdl, endl, startl, loggedInUser);
-            //checks for overlap time && business hour check
-            if(!isAppointmnetOverlapped(appointmentModified) && isAppBusinessHours(appointmentModified)){
-            Update.updateApp(appointmentModified);
-            //Moves user to main screen and passes loggedInUser
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/View/Main Screen.fxml"));
-            Parent mainScreen = loader.load();
-            MainScreen controller = loader.getController();
-            controller.passLoggedInUser(loggedInUser);
-            System.out.println(loggedInUser);
-            Scene mainScreenScene = new Scene(mainScreen);
-            Stage window = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
-            window.setScene(mainScreenScene);
-            window.show();
-            }else{
-                Helper.AlertError(Alert.AlertType.ERROR, "Invalid appointment hours", "Appointment time is overlapping or Appointment Start/End date is before or after business hours");
-            }
+        }catch (RuntimeException e){
+            Alert alertCustomer = new Alert(Alert.AlertType.ERROR);
+            alertCustomer.setHeaderText("Please input data into all Appointment data fields");
+            alertCustomer.setTitle("Missing appointment data");
+            alertCustomer.showAndWait();
         }
     }
 /**

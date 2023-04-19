@@ -134,12 +134,12 @@ checks if data entry is null returns boolean if true/false
 
     public static boolean validateAppointment(Appointment appointment){
         boolean isFieldEmpty = true;
-        if(appointment.getUserId() == 0){
-            isFieldEmpty = false;
-        }
-        if(appointment.getCustomerId() == 0){
-            isFieldEmpty = false;
-        }
+//        if(appointment.getUserId() == 0){
+//            isFieldEmpty = false;
+//        }
+//        if(appointment.getCustomerId() == 0){
+//            isFieldEmpty = false;
+//        }
         if(appointment.getTitle().equals("")){
             isFieldEmpty = false;
         }
