@@ -1,0 +1,1 @@
+java --module-path "Java Dependencies\javafx-sdk-17.0.7\lib" --add-modules javafx.controls,javafx.fxml -jar "out\artifacts\Final_C195_jar\Final C195.jar"
